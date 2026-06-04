@@ -82,6 +82,13 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
+    public Carrito seleccionarMetodoPago(Long clienteId, Long metodoPagoId) {
+        Carrito carrito = obtenerCarritoActivo(clienteId);
+        carrito.setMetodoPagoSeleccionadoId(metodoPagoId);
+        carrito.setFechaUltimaModificacion(LocalDateTime.now());
+        return carritoRepository.save(carrito);
+    }
+    
     public Carrito seleccionarTipoEnvio(Long clienteId, Long tipoEnvioId) { // METODO DE PAGO ID
         Carrito carrito = obtenerCarritoActivo(clienteId);
         carrito.setTipoEnvioSeleccionadoId(tipoEnvioId);

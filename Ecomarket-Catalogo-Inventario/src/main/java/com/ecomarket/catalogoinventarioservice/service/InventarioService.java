@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ecomarket.catalogoinventarioservice.client.GestionTiendaClient;
 import com.ecomarket.catalogoinventarioservice.model.InventarioStock;
 import com.ecomarket.catalogoinventarioservice.repository.InventarioStockRepository;
 
@@ -13,8 +14,12 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class InventarioService {
+
     @Autowired
     private InventarioStockRepository inventarioRepository;
+
+    @Autowired
+    private GestionTiendaClient gestionTiendaClient;
 
     public List<InventarioStock> listarTodos() {
         return inventarioRepository.findAll();
@@ -41,6 +46,13 @@ public class InventarioService {
                     s.setCantidadDisponible(s.getCantidadDisponible() - cantidad);
                     s.setCantidadReservada(s.getCantidadReservada() + cantidad);
                     inventarioRepository.save(s);
+
+                    if (s.getStockMinimoAlerta() != null
+                            && s.getCantidadDisponible() <= s.getStockMinimoAlerta()) {
+                        gestionTiendaClient.notificarStockBajo(
+                            s.getSucursalId(), productoId, s.getCantidadDisponible());
+                    }
+
                     return true;
                 }).orElse(false);
     }
