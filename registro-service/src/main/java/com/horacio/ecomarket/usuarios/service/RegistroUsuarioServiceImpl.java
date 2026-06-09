@@ -1,5 +1,6 @@
 package com.horacio.ecomarket.usuarios.service;
 
+import com.horacio.ecomarket.usuarios.client.IniciosesionClient;
 import com.horacio.ecomarket.usuarios.model.Permiso;
 import com.horacio.ecomarket.usuarios.model.PerfilUsuario;
 import com.horacio.ecomarket.usuarios.model.Rol;
@@ -18,6 +19,7 @@ public class RegistroUsuarioServiceImpl implements RegistroUsuarioService {
 
     private final PerfilUsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final IniciosesionClient iniciosesionClient;
 
     @Override
     @Transactional
@@ -27,9 +29,21 @@ public class RegistroUsuarioServiceImpl implements RegistroUsuarioService {
                     throw new RuntimeException("El correo ya está registrado: " + perfilUsuario.getCorreo());
                 });
 
-        perfilUsuario.setPassword(passwordEncoder.encode(contrasenaInicial));
+        String contrasenaHasheada = passwordEncoder.encode(contrasenaInicial);
+        perfilUsuario.setPassword(contrasenaHasheada);
         perfilUsuario.setFechaCreacion(LocalDateTime.now());
-        return repository.save(perfilUsuario);
+
+        // 1. Guardar en usuarios_db
+        PerfilUsuario creado = repository.save(perfilUsuario);
+
+        // 2. Sincronizar credencial con iniciosesion-service
+        iniciosesionClient.crearCredencial(
+                creado.getId(),
+                creado.getCorreo(),
+                contrasenaHasheada
+        );
+
+        return creado;
     }
 
     @Override
@@ -40,7 +54,6 @@ public class RegistroUsuarioServiceImpl implements RegistroUsuarioService {
         existente.setNombre(datosNuevos.getNombre());
         existente.setTelefono(datosNuevos.getTelefono());
 
-        // Actualizar correo sólo si cambió y no está tomado
         if (!existente.getCorreo().equals(datosNuevos.getCorreo())) {
             repository.findByCorreo(datosNuevos.getCorreo())
                     .ifPresent(u -> {
