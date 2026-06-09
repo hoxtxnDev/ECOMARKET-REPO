@@ -1,5 +1,7 @@
 package com.horacio.ecomarket.usuarios.dto;
 
+import com.horacio.ecomarket.usuarios.model.EstadoPerfilEnum;
+
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -21,5 +23,5 @@ public class RegistroUsuarioDTO {
 
     private Long rolId;
 
-    private Long estadoPerfilId;
+    private EstadoPerfilEnum estadoPerfilId;
 }

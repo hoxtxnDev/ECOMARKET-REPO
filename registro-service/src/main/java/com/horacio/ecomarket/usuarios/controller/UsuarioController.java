@@ -78,9 +78,9 @@ public class UsuarioController {
     public ResponseEntity<Boolean> configurarPermisos(
             @PathVariable Long id,
             @Valid @RequestBody ConfigurarPermisosDTO dto) {
-        List<Permiso> permisos = dto.getPermisoIds().stream()
-                .map(pid -> permisoRepository.findById(pid)
-                        .orElseThrow(() -> new RuntimeException("Permiso no encontrado con ID: " + pid)))
+        List<Permiso> permisos = dto.getPermisoNombres().stream()
+                .map(nombre -> permisoRepository.findByNombre(nombre)
+                        .orElseThrow(() -> new RuntimeException("Permiso no encontrado con nombre: " + nombre)))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(service.configurarPermisos(id, permisos));
     }
@@ -106,8 +106,9 @@ public class UsuarioController {
         }
 
         if (dto.getEstadoPerfilId() != null) {
-            EstadoPerfil estado = estadoPerfilRepository.findById(dto.getEstadoPerfilId())
-                    .orElseThrow(() -> new RuntimeException("EstadoPerfil no encontrado con ID: " + dto.getEstadoPerfilId()));
+            EstadoPerfil estado = estadoPerfilRepository.findByNombre(dto.getEstadoPerfilId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "EstadoPerfil no encontrado con ID: " + dto.getEstadoPerfilId()));
             builder.estadoPerfil(estado);
         }
 
@@ -128,7 +129,8 @@ public class UsuarioController {
 
         if (dto.getEstadoPerfilId() != null) {
             EstadoPerfil estado = estadoPerfilRepository.findById(dto.getEstadoPerfilId())
-                    .orElseThrow(() -> new RuntimeException("EstadoPerfil no encontrado con ID: " + dto.getEstadoPerfilId()));
+                    .orElseThrow(() -> new RuntimeException(
+                            "EstadoPerfil no encontrado con ID: " + dto.getEstadoPerfilId()));
             builder.estadoPerfil(estado);
         }
 

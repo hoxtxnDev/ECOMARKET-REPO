@@ -9,5 +9,5 @@ import java.util.List;
 public class ConfigurarPermisosDTO {
 
     @NotNull(message = "La lista de permisos no puede ser nula")
-    private List<Long> permisoIds;
+    private List<String> permisoNombres;
 }

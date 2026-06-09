@@ -16,6 +16,6 @@ public class EstadoPerfil {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String nombre; // Ej: ACTIVO, INACTIVO, SUSPENDIDO
+    private EstadoPerfilEnum nombre; // Ej: ACTIVO, INACTIVO, SUSPENDIDO
 
 }
