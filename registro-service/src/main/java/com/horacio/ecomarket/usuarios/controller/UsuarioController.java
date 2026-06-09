@@ -137,3 +137,9 @@ public class UsuarioController {
         return builder.build();
     }
 }
+
+// Autosembrado de ROLES DE ENUM, LA IDEA ES QUE AL CREAR USUARIO, se cree cliente por defecto
+// y luego se le asignen los permisos correspondientes a ese rol, pero se puede modificar el rol al crear el usuario o posteriormente
+// El rol se asigna al perfil de usuario, y el perfil de usuario tiene una relación con los permisos, entonces al asignar un rol, se asignan los permisos correspondientes a ese rol.
+// Rellenar controller con endpoints para crear usuario, modificar usuario, listar usuarios, buscar por id, buscar por correo, configurar permisos y eliminar usuario. 
+// AUTOSEMBRAR ESTADO PERFIL CON ENUM
